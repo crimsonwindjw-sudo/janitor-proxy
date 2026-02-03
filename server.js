@@ -1,7 +1,9 @@
 import express from "express";
-import fetch from "node-fetch"; // Node < 18 only
+import fetch from "node-fetch";
+import cors from "cors"; // <-- import cors
 
 const app = express();
+app.use(cors()); // <-- enable CORS for all origins
 app.use(express.json());
 
 const DEEPSEEK_API_KEY = "sk-66781992d71e483fa0f31442eb8dbc9e";
