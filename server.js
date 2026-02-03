@@ -1,24 +1,7 @@
-// server.js
-import express from "express";
-import cors from "cors";
-
-const app = express();
-
-// Allow browser requests
-app.use(cors());
-app.use(express.json());
-
-// Use environment variable for API key
-const DEEPSEEK_API_KEY = process.env.DEEPSEEK_API_KEY;
-
-if (!DEEPSEEK_API_KEY) {
-  console.error("ERROR: DEEPSEEK_API_KEY is not set in environment variables!");
-  process.exit(1);
-}
-
-// Proxy route
 app.post("/v1/chat/completions", async (req, res) => {
   try {
+    console.log("Incoming request body:", req.body);
+
     const response = await fetch("https://api.deepseek.com/v1/chat/completions", {
       method: "POST",
       headers: {
@@ -28,10 +11,11 @@ app.post("/v1/chat/completions", async (req, res) => {
       body: JSON.stringify(req.body),
     });
 
-    console.log("DeepSeek status:", response.status);
+    console.log("DeepSeek response status:", response.status);
+    const data = await response.text(); // use text first for debugging
+    console.log("DeepSeek response data:", data);
 
-    const data = await response.json();
-    res.json(data);
+    res.send(data); // just forward raw text for now
   } catch (err) {
     console.error("Proxy error:", err);
     res.status(500).json({ error: "Proxy failed" });
