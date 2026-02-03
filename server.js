@@ -1,12 +1,22 @@
+// server.js
 import express from "express";
 import cors from "cors";
 
 const app = express();
+
+// Allow browser requests
 app.use(cors());
 app.use(express.json());
 
-const DEEPSEEK_API_KEY = "sk-66781992d71e483fa0f31442eb8dbc9e";
+// Use environment variable for API key
+const DEEPSEEK_API_KEY = process.env.DEEPSEEK_API_KEY;
 
+if (!DEEPSEEK_API_KEY) {
+  console.error("ERROR: DEEPSEEK_API_KEY is not set in environment variables!");
+  process.exit(1);
+}
+
+// Proxy route
 app.post("/v1/chat/completions", async (req, res) => {
   try {
     const response = await fetch("https://api.deepseek.com/v1/chat/completions", {
@@ -18,7 +28,6 @@ app.post("/v1/chat/completions", async (req, res) => {
       body: JSON.stringify(req.body),
     });
 
-    // debug
     console.log("DeepSeek status:", response.status);
 
     const data = await response.json();
@@ -29,5 +38,6 @@ app.post("/v1/chat/completions", async (req, res) => {
   }
 });
 
+// Start server
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Salad proxy running on port ${PORT}`));
