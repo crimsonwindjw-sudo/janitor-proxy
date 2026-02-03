@@ -1,9 +1,8 @@
 import express from "express";
-import fetch from "node-fetch";
-import cors from "cors"; // <-- import cors
+import cors from "cors";
 
 const app = express();
-app.use(cors()); // <-- enable CORS for all origins
+app.use(cors());
 app.use(express.json());
 
 const DEEPSEEK_API_KEY = "sk-66781992d71e483fa0f31442eb8dbc9e";
@@ -19,10 +18,13 @@ app.post("/v1/chat/completions", async (req, res) => {
       body: JSON.stringify(req.body),
     });
 
+    // debug
+    console.log("DeepSeek status:", response.status);
+
     const data = await response.json();
     res.json(data);
   } catch (err) {
-    console.error(err);
+    console.error("Proxy error:", err);
     res.status(500).json({ error: "Proxy failed" });
   }
 });
